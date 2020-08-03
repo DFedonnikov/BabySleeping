@@ -1,4 +1,4 @@
-package com.babysleeping
+package com.babysleep
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

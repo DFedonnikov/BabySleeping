@@ -1,4 +1,4 @@
-package com.babysleeping.di
+package com.babysleep.di
 
 import dagger.Module
 import dagger.Provides

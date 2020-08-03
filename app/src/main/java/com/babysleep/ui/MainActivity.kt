@@ -1,11 +1,13 @@
-package com.babysleeping
+package com.babysleep.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.babysleep.R
+import com.babysleep.navigation.StartScreen
+import com.babysleep.navigation.CustomFragmentNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -16,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var router: Router
-    private val navigator = SupportAppNavigator(this, R.id.container)
+    private val navigator = CustomFragmentNavigator(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

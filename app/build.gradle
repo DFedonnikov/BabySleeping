@@ -3,13 +3,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
 
     defaultConfig {
-        applicationId "com.babysleeping"
+        applicationId "com.babysleep"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
@@ -30,6 +31,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     buildFeatures {
         viewBinding true
     }
@@ -41,11 +46,35 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.3.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    def lifecycle_version = "2.2.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation "androidx.fragment:fragment-ktx:1.2.5"
 
+
+    //DI
     implementation "com.google.dagger:hilt-android:2.28-alpha"
+    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
+    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
     kapt "com.google.dagger:hilt-android-compiler:2.28-alpha"
 
+    //Navigation
     implementation "ru.terrakok.cicerone:cicerone:5.1.1"
+
+    //UI
+    implementation "com.airbnb.android:lottie:3.4.1"
+    def coil = "0.11.0"
+    implementation "io.coil-kt:coil-base:$coil"
+    implementation "io.coil-kt:coil-svg:$coil"
+
+    //Firebase
+    implementation "com.google.firebase:firebase-analytics:17.4.4"
+    implementation "com.google.firebase:firebase-database-ktx:19.3.1"
+    implementation "com.google.firebase:firebase-auth-ktx:19.3.2"
+
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sound_item_radius">25dp</dimen>
+    <dimen name="sound_item_elevation">7dp</dimen>
+    <dimen name="offset">10dp</dimen>
+</resources>

@@ -1,4 +1,4 @@
-package com.babysleeping
+package com.babysleep
 
 import org.junit.Test
 

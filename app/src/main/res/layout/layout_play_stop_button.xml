@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.airbnb.lottie.LottieAnimationView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/playPauseButton"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_marginBottom="50dp"
+    app:lottie_colorFilter="@color/white"
+    app:lottie_progress="0.5"
+    app:lottie_rawRes="@raw/play_pause"
+    app:lottie_speed="-2" />

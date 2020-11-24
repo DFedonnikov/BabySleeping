@@ -1,42 +1,42 @@
 package com.babysleep.presentation.naturesounds
 
-import android.util.Log
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
-import com.babysleep.domain.Sounds
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
+import androidx.lifecycle.*
+import com.babysleep.domain.SoundsInteractor
+import com.babysleep.ui.RenderData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class NatureSoundsViewModel @ViewModelInject constructor(private val database: DatabaseReference) :
+@HiltViewModel
+class NatureSoundsViewModel @Inject constructor(
+    private val interactor: SoundsInteractor,
+    private val builder: NatureSoundsBuilder
+) :
     ViewModel(), CoroutineScope {
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
 
-    override val coroutineContext: CoroutineContext = Dispatchers.IO
+    private val soundsLiveData = MutableLiveData<List<SoundsItem>>()
+
+    val sounds: LiveData<List<SoundsItem>> by lazy { soundsLiveData }
 
     init {
+        soundsLiveData.value = builder.loadingItems
         launch {
-            val auth = Firebase.auth
-            auth.signInAnonymously()
-                .addOnCompleteListener {
-                    database.addValueEventListener(object : ValueEventListener {
-                        override fun onCancelled(error: DatabaseError) {
-                            Log.d("DATABASE", "ERROR: $error")
-                        }
-
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            Log.d("DATABASE", "SUCCESS: $snapshot")
-                            val data = snapshot.getValue<Sounds>()
-                            data?.let { it.nature }
-                        }
-                    })
-                }
+            interactor.getNatureSounds()
+                .map { builder.build(it) }
+                .collect { soundsLiveData.value = it }
         }
     }
 
+    fun setSelected(id: Int) {
+        soundsLiveData.value
+            ?.mapNotNull {
+                val state = it.renderState as? RenderData ?: return@mapNotNull null
+                it.copy(renderState = state.copy(isSelected = id == it.id))
+            }
+            ?.let { soundsLiveData.value = it }
+    }
 }

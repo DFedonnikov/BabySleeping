@@ -1,5 +1,6 @@
 package com.babysleep.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.babysleep.ui.naturesounds.NatureSoundsFragment
@@ -8,6 +9,7 @@ class SoundsCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragmen
 
     override fun getItemCount(): Int = 2
 
+    @ExperimentalFoundationApi
     override fun createFragment(position: Int): Fragment = when (position) {
         0 -> NatureSoundsFragment()
         1 -> NoisesFragment()

@@ -3,25 +3,25 @@ package com.babysleep.di
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.components.SingletonComponent
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Router
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityComponent::class)
+@InstallIn(SingletonComponent::class)
 object NavigationModule {
 
     @Provides
-    @ActivityScoped
+    @Singleton
     fun provideCicerone() = Cicerone.create()
 
     @Provides
-    @ActivityScoped
+    @Singleton
     fun provideRouter(cicerone: Cicerone<Router>) = cicerone.router
 
     @Provides
-    @ActivityScoped
+    @Singleton
     fun provideNavigationHolder(cicerone: Cicerone<Router>) = cicerone.navigatorHolder
 
 }

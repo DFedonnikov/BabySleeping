@@ -1,9 +1,8 @@
 package com.babysleep.presentation.naturesounds
 
-import com.babysleep.ui.SoundItemLayout
-import java.util.*
+import com.babysleep.ui.RenderState
 
 data class SoundsItem(
-    val id: String = UUID.randomUUID().toString(),
-    val renderData: SoundItemLayout.RenderData
+    val id: Int,
+    val renderState: RenderState
 )

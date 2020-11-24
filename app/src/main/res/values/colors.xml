@@ -5,7 +5,9 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="cranberry">#D65B93</color>
     <color name="cranberry40">#66D65B93</color>
-    <color name="cranberry20">#33D65B93</color>
+    <color name="cranberry20">#66D65B93</color>
     <color name="white">#FFFFFF</color>
     <color name="port_gore">#201A46</color>
+    <color name="mischka">#CECCDC</color>
+    <color name="white20">#33FFFFFF</color>
 </resources>

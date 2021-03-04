@@ -14,7 +14,7 @@ import dagger.hilt.android.components.ViewModelComponent
 
 private const val DATABAS_SOUNDS_CHILD = "sounds"
 private const val DATABASE_NATURE_SOUNDS_CHILD = "nature"
-private const val DATABASE_NOISES_CHILD = "noises"
+private const val DATABASE_NOISES_CHILD = "noise"
 
 @Module
 @InstallIn(ViewModelComponent::class)

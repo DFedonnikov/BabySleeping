@@ -1,9 +1,6 @@
 package com.babysleep.di
 
 import android.content.Context
-import coil.ImageLoader
-import coil.util.CoilUtils
-import com.babysleep.data.StorageReferenceFetcher
 import com.babysleep.data.auth.AuthProvider
 import com.babysleep.data.auth.AuthProviderImpl
 import com.google.firebase.auth.FirebaseAuth
@@ -15,13 +12,11 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.DefineComponent
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import okhttp3.OkHttpClient
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
 
@@ -31,19 +26,6 @@ private const val SHARED_PREFERENCES_NAME = "BabySleepSharedPreferences"
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Provides
-    @Singleton
-    fun provideImageLoader(@ApplicationContext context: Context): ImageLoader =
-        ImageLoader.Builder(context)
-            .apply {
-                componentRegistry { add(StorageReferenceFetcher(context)) }
-                okHttpClient {
-                    OkHttpClient.Builder()
-                        .cache(CoilUtils.createDefaultCache(context))
-                        .build()
-                }
-            }.build()
 
     @Provides
     fun provideIoCoroutineContext(): CoroutineContext = Dispatchers.IO

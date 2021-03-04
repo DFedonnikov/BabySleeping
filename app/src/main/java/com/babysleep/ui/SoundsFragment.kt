@@ -80,10 +80,12 @@ class SoundsFragment : Fragment() {
                 val topWaveEdge = createGuidelineFromTop(0.3f)
                 val bottomWaveEdge = createGuidelineFromTop(0.62f)
                 val (pagerRef, topWaveRef, bottomWaveRef, playStopButtonRef, icSoundQuietRef, icSoundLoudRef, seekBarRef) = createRefs()
-                Pager(modifier = Modifier.constrainAs(pagerRef) {
-                    top.linkTo(contentTopEdge)
-                    bottom.linkTo(contentBottomEdge)
-                })
+                Pager(modifier = Modifier
+                    .constrainAs(pagerRef) {
+                        top.linkTo(contentTopEdge)
+                        bottom.linkTo(contentBottomEdge)
+                    }
+                    .fillMaxHeight(0.5f))
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bg_top_wave),
                     contentDescription = null,

@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import com.babysleep.di.NatureSoundsDataSource
 import com.babysleep.di.NoisesDataSource
 import com.babysleep.domain.Nature
+import com.babysleep.domain.Noise
 import com.babysleep.domain.SoundsRepository
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -38,6 +39,7 @@ class SoundsRepositoryImpl @Inject constructor(
                     snapshot.getValue<List<Nature>>()?.let {
                         launch {
                             it.map {
+                                it.imageUrl = buildImageUrl(it.imageUrl)
                                 it.audioUrl = buildSoundUrl(it.audioUrl)
                                 it
                             }
@@ -50,11 +52,43 @@ class SoundsRepositoryImpl @Inject constructor(
         }
     }
 
+    private suspend fun buildImageUrl(imageUrl: String): String {
+        return sharedPreferences.getString(imageUrl, null) ?: run {
+            val fullUrl = storageReference.child(imageUrl).downloadUrl.await().toString()
+            sharedPreferences.edit { putString(imageUrl, fullUrl) }
+            fullUrl
+        }
+    }
+
     private suspend fun buildSoundUrl(audioUrl: String): String {
         return sharedPreferences.getString(audioUrl, null) ?: run {
             val fullUrl = storageReference.child(audioUrl).downloadUrl.await().toString()
             sharedPreferences.edit { putString(audioUrl, fullUrl) }
             fullUrl
+        }
+    }
+
+    override fun getNoises(): Flow<List<Noise>> {
+        return callbackFlow {
+            noisesDataSource.addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    cancel("Sounds API call error", error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.getValue<List<Noise>>()?.let {
+                        launch {
+                            it.map {
+                                it.imageUrl = buildImageUrl(it.imageUrl)
+                                it.audioUrl = buildSoundUrl(it.audioUrl)
+                                it
+                            }
+                            send(it)
+                        }
+                    }
+                }
+            })
+            awaitClose { natureSoundsDataSource.removeValue() }
         }
     }
 }

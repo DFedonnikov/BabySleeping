@@ -1,7 +1,7 @@
 package com.babysleep.presentation.naturesounds
 
 import android.net.Uri
-import com.babysleep.domain.Nature
+import com.babysleep.domain.Sound
 import com.babysleep.extensions.parseColor
 import com.babysleep.ui.Loading
 import com.babysleep.ui.RenderData
@@ -11,7 +11,7 @@ import javax.inject.Inject
 interface NatureSoundsBuilder {
 
     val loadingItems: List<SoundsItem>
-    fun build(list: List<Nature>): List<SoundsItem>
+    fun build(list: List<Sound>): List<SoundsItem>
 }
 
 class NatureSoundsBuilderImpl @Inject constructor(private val storageReference: StorageReference) :
@@ -19,14 +19,12 @@ class NatureSoundsBuilderImpl @Inject constructor(private val storageReference: 
 
     override val loadingItems = Array(6) { SoundsItem(id = it, renderState = Loading) }.toList()
 
-    override fun build(list: List<Nature>): List<SoundsItem> {
+    override fun build(list: List<Sound>): List<SoundsItem> {
         return list.mapIndexed { index, sound ->
             SoundsItem(
                 id = index,
                 renderState = RenderData(
-                    iconUrl = sound.imageUrl.takeIf { it.isNotEmpty() }?.let {
-                        storageReference.child(it)
-                    },
+                    iconUrl = Uri.parse(sound.imageUrl),
                     soundUrl = Uri.parse(sound.audioUrl),
                     title = sound.titleEn,
                     highlightTextColor = sound.color?.textColorHex.parseColor(),

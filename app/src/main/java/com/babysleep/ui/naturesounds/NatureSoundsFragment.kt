@@ -15,13 +15,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import coil.ImageLoader
 import com.babysleep.presentation.naturesounds.NatureSoundsViewModel
 import com.babysleep.ui.RenderData
 import com.babysleep.ui.SoundControlViewModel
 import com.babysleep.ui.SoundItem
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 @ExperimentalFoundationApi
@@ -30,9 +28,6 @@ class NatureSoundsFragment : Fragment() {
 
     private val viewModel: NatureSoundsViewModel by viewModels()
     private val soundControlViewModel: SoundControlViewModel by activityViewModels()
-
-    @Inject
-    lateinit var imageLoader: ImageLoader
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +45,6 @@ class NatureSoundsFragment : Fragment() {
                     items(items ?: emptyList()) { item ->
                         SoundItem(
                             state = item.renderState,
-                            imageLoader = imageLoader,
                             modifier = Modifier.clickable {
                                 (item.renderState as? RenderData)?.let {
                                     viewModel.setSelected(item.id)

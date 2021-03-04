@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,7 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -39,8 +40,11 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import dagger.hilt.android.AndroidEntryPoint
+import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
+import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import javax.inject.Inject
 
+@ExperimentalAnimationApi
 @AndroidEntryPoint
 class SoundsFragment : Fragment() {
 
@@ -65,84 +69,86 @@ class SoundsFragment : Fragment() {
     @Composable
     fun buildContent() {
         MaterialTheme {
-            ConstraintLayout(
-                modifier = Modifier.background(
-                    color = Color(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.port_gore
+            ProvideWindowInsets {
+                ConstraintLayout(
+                    modifier = Modifier.background(
+                        color = Color(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.port_gore
+                            )
                         )
                     )
-                )
-            ) {
-                val contentTopEdge = createGuidelineFromTop(0.21f)
-                val contentBottomEdge = createGuidelineFromTop(0.71f)
-                val topWaveEdge = createGuidelineFromTop(0.3f)
-                val bottomWaveEdge = createGuidelineFromTop(0.62f)
-                val (pagerRef, topWaveRef, bottomWaveRef, playStopButtonRef, icSoundQuietRef, icSoundLoudRef, seekBarRef) = createRefs()
-                Pager(modifier = Modifier
-                    .constrainAs(pagerRef) {
-                        top.linkTo(contentTopEdge)
-                        bottom.linkTo(contentBottomEdge)
-                    }
-                    .fillMaxHeight(0.5f))
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.bg_top_wave),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .constrainAs(topWaveRef) {
-                            bottom.linkTo(topWaveEdge)
-                            top.linkTo(parent.top)
+                ) {
+                    val contentTopEdge = createGuidelineFromTop(0.21f)
+                    val contentBottomEdge = createGuidelineFromTop(0.71f)
+                    val topWaveEdge = createGuidelineFromTop(0.3f)
+                    val bottomWaveEdge = createGuidelineFromTop(0.62f)
+                    val (pagerRef, topWaveRef, bottomWaveRef, playStopButtonRef, icSoundQuietRef, icSoundLoudRef, seekBarRef) = createRefs()
+                    Pager(modifier = Modifier
+                        .constrainAs(pagerRef) {
+                            top.linkTo(contentTopEdge)
+                            bottom.linkTo(contentBottomEdge)
                         }
-                        .fillMaxSize()
-                )
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.bg_bottom_wave),
-                    modifier = Modifier
-                        .constrainAs(bottomWaveRef) {
-                            top.linkTo(bottomWaveEdge)
-                            bottom.linkTo(parent.bottom)
-                        }
-                        .fillMaxSize(),
-                    contentDescription = null
-                )
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_sound_quiet),
-                    modifier = Modifier
-                        .constrainAs(icSoundQuietRef) {
-                            start.linkTo(parent.start)
+                        .fillMaxHeight(0.5f))
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.bg_top_wave),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .constrainAs(topWaveRef) {
+                                bottom.linkTo(topWaveEdge)
+                                top.linkTo(parent.top)
+                            }
+                            .fillMaxSize()
+                    )
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.bg_bottom_wave),
+                        modifier = Modifier
+                            .constrainAs(bottomWaveRef) {
+                                top.linkTo(bottomWaveEdge)
+                                bottom.linkTo(parent.bottom)
+                            }
+                            .fillMaxSize(),
+                        contentDescription = null
+                    )
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_sound_quiet),
+                        modifier = Modifier
+                            .constrainAs(icSoundQuietRef) {
+                                start.linkTo(parent.start)
+                                top.linkTo(icSoundLoudRef.top)
+                                bottom.linkTo(icSoundLoudRef.bottom)
+                            }
+                            .height(10.dp)
+                            .padding(start = 50.dp)
+                            .offset(y = (-50).dp),
+                        contentDescription = null
+                    )
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_sound_loud),
+                        modifier = Modifier
+                            .constrainAs(icSoundLoudRef) {
+                                end.linkTo(parent.end)
+                                bottom.linkTo(playStopButtonRef.top)
+                            }
+                            .padding(end = 50.dp)
+                            .offset(y = (-50).dp),
+                        contentDescription = null
+                    )
+                    SeekBar(modifier = Modifier
+                        .constrainAs(seekBarRef) {
                             top.linkTo(icSoundLoudRef.top)
                             bottom.linkTo(icSoundLoudRef.bottom)
+                            start.linkTo(icSoundQuietRef.end)
+                            end.linkTo(icSoundLoudRef.start)
+                            width = Dimension.fillToConstraints
                         }
-                        .height(Dp(10f))
-                        .padding(start = Dp(50f))
-                        .offset(y = Dp(50f)),
-                    contentDescription = null
-                )
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_sound_loud),
-                    modifier = Modifier
-                        .constrainAs(icSoundLoudRef) {
-                            end.linkTo(parent.end)
-                            top.linkTo(contentBottomEdge)
-                        }
-                        .padding(end = Dp(50f))
-                        .offset(y = Dp(50f)),
-                    contentDescription = null
-                )
-                SeekBar(modifier = Modifier
-                    .constrainAs(seekBarRef) {
-                        top.linkTo(icSoundLoudRef.top)
-                        bottom.linkTo(icSoundLoudRef.bottom)
-                        start.linkTo(icSoundQuietRef.end)
-                        end.linkTo(icSoundLoudRef.start)
-                        width = Dimension.fillToConstraints
-                    }
-                    .offset(y = Dp(50f)))
-                PlayStopButton(modifier = Modifier.constrainAs(playStopButtonRef) {
-                    bottom.linkTo(parent.bottom)
-                    centerHorizontallyTo(parent)
-                })
+                        .offset(y = (-50).dp))
+                    PlayStopButton(modifier = Modifier.constrainAs(playStopButtonRef) {
+                        bottom.linkTo(parent.bottom)
+                        centerHorizontallyTo(parent)
+                    })
+                }
             }
         }
     }
@@ -165,9 +171,10 @@ class SoundsFragment : Fragment() {
                     attachToParent
                 )
             }, modifier = modifier
-                .width(Dp(50f))
-                .height(Dp(50f))
-                .offset(y = Dp(-50f)),
+                .requiredWidth(70.dp)
+                .requiredHeight(70.dp)
+                .offset(y = (-20).dp)
+                .navigationBarsPadding(),
             update = {
                 root.setMinProgress(0.5f)
                 soundControlViewModel.soundChangeLiveData.observe(
@@ -215,7 +222,7 @@ class SoundsFragment : Fragment() {
                 )
             },
             modifier = modifier
-                .heightIn(max = Dp(3f)),
+                .heightIn(max = 3.dp),
             update = {
                 root.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {

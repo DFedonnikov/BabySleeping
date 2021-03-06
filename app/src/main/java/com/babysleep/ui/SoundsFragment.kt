@@ -8,22 +8,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -42,6 +50,7 @@ import com.google.android.exoplayer2.util.Util
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import javax.inject.Inject
 
 @ExperimentalAnimationApi
@@ -84,7 +93,13 @@ class SoundsFragment : Fragment() {
                     val contentBottomEdge = createGuidelineFromTop(0.71f)
                     val topWaveEdge = createGuidelineFromTop(0.3f)
                     val bottomWaveEdge = createGuidelineFromTop(0.62f)
-                    val (pagerRef, topWaveRef, bottomWaveRef, playStopButtonRef, icSoundQuietRef, icSoundLoudRef, seekBarRef) = createRefs()
+                    val (pagerRef,
+                        topWaveRef,
+                        bottomWaveRef,
+                        playStopButtonRef,
+                        icSoundQuietRef,
+                        icSoundLoudRef,
+                        seekBarRef) = createRefs()
                     Pager(modifier = Modifier
                         .constrainAs(pagerRef) {
                             top.linkTo(contentTopEdge)
@@ -135,6 +150,10 @@ class SoundsFragment : Fragment() {
                             .offset(y = (-50).dp),
                         contentDescription = null
                     )
+                    PagerIndicator(
+                        scope = this,
+                        pagerRef = pagerRef
+                    )
                     SeekBar(modifier = Modifier
                         .constrainAs(seekBarRef) {
                             top.linkTo(icSoundLoudRef.top)
@@ -154,11 +173,87 @@ class SoundsFragment : Fragment() {
     }
 
     @Composable
+    private fun PagerIndicator(
+        scope: ConstraintLayoutScope,
+        pagerRef: ConstrainedLayoutReference
+    ) {
+        val indicatorRender by soundControlViewModel.pageChangedLiveData.observeAsState(
+            IndicatorRender()
+        )
+        with(scope) {
+            val (natureTitleRef, noiseTitleRef, indicatorRef, dummyStartRef, dummyEndRef) = createRefs()
+            Text(
+                modifier = Modifier
+                    .constrainAs(natureTitleRef) {
+                        linkTo(top = parent.top, bottom = pagerRef.top, bias = 0.7f)
+                        linkTo(start = parent.start, end = parent.end, bias = 0.15f)
+                    }
+                    .statusBarsPadding(),
+                text = stringResource(id = R.string.nature_title),
+                fontSize = 20.sp,
+                color = Color.White.copy(alpha = indicatorRender.natureTitleAlpha),
+                textAlign = TextAlign.Center,
+                fontFamily = FontFamily(Font(R.font.montserrat_alternates))
+            )
+            Spacer(modifier = Modifier.constrainAs(dummyStartRef) {
+                top.linkTo(natureTitleRef.bottom)
+                linkTo(start = natureTitleRef.start, end = natureTitleRef.end)
+            })
+            Text(
+                modifier = Modifier
+                    .constrainAs(noiseTitleRef) {
+                        linkTo(top = parent.top, bottom = pagerRef.top, bias = 0.7f)
+                        linkTo(start = parent.start, end = parent.end, bias = 0.85f)
+                    }
+                    .statusBarsPadding(),
+                text = stringResource(id = R.string.noise_title),
+                fontSize = 20.sp,
+                color = Color.White.copy(alpha = indicatorRender.noiseTitleAlpha),
+                textAlign = TextAlign.Center,
+                fontFamily = FontFamily(Font(R.font.montserrat_alternates))
+            )
+            Spacer(modifier = Modifier.constrainAs(dummyEndRef) {
+                top.linkTo(natureTitleRef.bottom)
+                linkTo(start = noiseTitleRef.start, end = noiseTitleRef.end)
+            })
+            Image(
+                modifier = Modifier
+                    .constrainAs(indicatorRef) {
+                        top.linkTo(natureTitleRef.bottom)
+                        linkTo(
+                            start = dummyStartRef.start,
+                            end = dummyEndRef.end,
+                            bias = indicatorRender.bias
+                        )
+                    }
+                    .requiredSize(6.dp)
+                    .offset(y = 2.dp),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_indicator),
+                contentDescription = null
+            )
+        }
+    }
+
+    @Composable
     private fun Pager(modifier: Modifier) {
         val viewPager = ViewPager2(requireContext()).apply {
             adapter = SoundsCollectionAdapter(this@SoundsFragment)
         }
-        AndroidView(factory = { viewPager }, modifier = modifier)
+        AndroidView(
+            factory = { viewPager },
+            modifier = modifier,
+            update = {
+                it.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+
+                    override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int
+                    ) {
+                        soundControlViewModel.onSoundPageScrolled(position, positionOffset)
+                    }
+                })
+            })
     }
 
     @Composable

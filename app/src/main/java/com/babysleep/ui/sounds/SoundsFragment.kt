@@ -1,4 +1,4 @@
-package com.babysleep.ui
+package com.babysleep.ui.sounds
 
 import android.animation.Animator
 import android.net.Uri
@@ -40,6 +40,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.babysleep.R
 import com.babysleep.databinding.LayoutPlayStopButtonBinding
 import com.babysleep.databinding.LayoutSeekBarBinding
+import com.babysleep.ui.IndicatorRender
+import com.babysleep.ui.SoundControlViewModel
 import com.google.android.exoplayer2.C.WAKE_MODE_LOCAL
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer

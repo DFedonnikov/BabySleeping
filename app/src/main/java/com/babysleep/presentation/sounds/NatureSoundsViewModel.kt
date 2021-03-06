@@ -1,9 +1,7 @@
-package com.babysleep.presentation
+package com.babysleep.presentation.sounds
 
 import androidx.lifecycle.*
 import com.babysleep.domain.SoundsInteractor
-import com.babysleep.presentation.naturesounds.NatureSoundsBuilder
-import com.babysleep.presentation.naturesounds.SoundsItem
 import com.babysleep.ui.RenderData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -13,32 +11,32 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
-class NoisesViewModel @Inject constructor(
+class NatureSoundsViewModel @Inject constructor(
     private val interactor: SoundsInteractor,
-    private val builder: NatureSoundsBuilder
+    private val builder: SoundsBuilder
 ) :
     ViewModel(), CoroutineScope {
     override val coroutineContext: CoroutineContext = Dispatchers.Main
 
-    private val noisesLiveData = MutableLiveData<List<SoundsItem>>()
+    private val soundsLiveData = MutableLiveData<List<SoundsItem>>()
 
-    val noises: LiveData<List<SoundsItem>> by lazy { noisesLiveData }
+    val sounds: LiveData<List<SoundsItem>> by lazy { soundsLiveData }
 
     init {
-        noisesLiveData.value = builder.loadingItems
+        soundsLiveData.value = builder.loadingItems
         launch {
-            interactor.getNoises()
+            interactor.getNatureSounds()
                 .map { builder.build(it) }
-                .collect { noisesLiveData.value = it }
+                .collect { soundsLiveData.value = it }
         }
     }
 
     fun setSelected(id: Int) {
-        noisesLiveData.value
+        soundsLiveData.value
             ?.mapNotNull {
                 val state = it.renderState as? RenderData ?: return@mapNotNull null
                 it.copy(renderState = state.copy(isSelected = id == it.id))
             }
-            ?.let { noisesLiveData.value = it }
+            ?.let { soundsLiveData.value = it }
     }
 }

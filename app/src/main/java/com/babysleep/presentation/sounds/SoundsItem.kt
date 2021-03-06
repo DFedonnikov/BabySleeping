@@ -1,4 +1,4 @@
-package com.babysleep.presentation.naturesounds
+package com.babysleep.presentation.sounds
 
 import com.babysleep.ui.RenderState
 

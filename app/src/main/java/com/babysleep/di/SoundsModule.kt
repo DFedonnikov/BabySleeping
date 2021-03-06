@@ -4,8 +4,8 @@ import com.babysleep.data.SoundsRepositoryImpl
 import com.babysleep.domain.SoundsInteractor
 import com.babysleep.domain.SoundsInteractorImpl
 import com.babysleep.domain.SoundsRepository
-import com.babysleep.presentation.naturesounds.NatureSoundsBuilder
-import com.babysleep.presentation.naturesounds.NatureSoundsBuilderImpl
+import com.babysleep.presentation.sounds.SoundsBuilder
+import com.babysleep.presentation.sounds.SoundsBuilderImpl
 import com.google.firebase.database.DatabaseReference
 import dagger.Module
 import dagger.Provides
@@ -39,5 +39,5 @@ object SoundsModule {
         .child(DATABASE_NOISES_CHILD)
 
     @Provides
-    fun provideNatureSoundsMapper(impl: NatureSoundsBuilderImpl): NatureSoundsBuilder = impl
+    fun provideNatureSoundsMapper(impl: SoundsBuilderImpl): SoundsBuilder = impl
 }

@@ -1,4 +1,4 @@
-package com.babysleep.presentation.naturesounds
+package com.babysleep.presentation.sounds
 
 import androidx.lifecycle.*
 import com.babysleep.domain.SoundsInteractor
@@ -11,32 +11,32 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
-class NatureSoundsViewModel @Inject constructor(
+class NoisesViewModel @Inject constructor(
     private val interactor: SoundsInteractor,
-    private val builder: NatureSoundsBuilder
+    private val builder: SoundsBuilder
 ) :
     ViewModel(), CoroutineScope {
     override val coroutineContext: CoroutineContext = Dispatchers.Main
 
-    private val soundsLiveData = MutableLiveData<List<SoundsItem>>()
+    private val noisesLiveData = MutableLiveData<List<SoundsItem>>()
 
-    val sounds: LiveData<List<SoundsItem>> by lazy { soundsLiveData }
+    val noises: LiveData<List<SoundsItem>> by lazy { noisesLiveData }
 
     init {
-        soundsLiveData.value = builder.loadingItems
+        noisesLiveData.value = builder.loadingItems
         launch {
-            interactor.getNatureSounds()
+            interactor.getNoises()
                 .map { builder.build(it) }
-                .collect { soundsLiveData.value = it }
+                .collect { noisesLiveData.value = it }
         }
     }
 
     fun setSelected(id: Int) {
-        soundsLiveData.value
+        noisesLiveData.value
             ?.mapNotNull {
                 val state = it.renderState as? RenderData ?: return@mapNotNull null
                 it.copy(renderState = state.copy(isSelected = id == it.id))
             }
-            ?.let { soundsLiveData.value = it }
+            ?.let { noisesLiveData.value = it }
     }
 }

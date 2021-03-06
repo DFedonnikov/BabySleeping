@@ -1,21 +1,19 @@
-package com.babysleep.presentation.naturesounds
+package com.babysleep.presentation.sounds
 
 import android.net.Uri
 import com.babysleep.domain.Sound
 import com.babysleep.extensions.parseColor
 import com.babysleep.ui.Loading
 import com.babysleep.ui.RenderData
-import com.google.firebase.storage.StorageReference
 import javax.inject.Inject
 
-interface NatureSoundsBuilder {
+interface SoundsBuilder {
 
     val loadingItems: List<SoundsItem>
     fun build(list: List<Sound>): List<SoundsItem>
 }
 
-class NatureSoundsBuilderImpl @Inject constructor(private val storageReference: StorageReference) :
-    NatureSoundsBuilder {
+class SoundsBuilderImpl @Inject constructor() : SoundsBuilder {
 
     override val loadingItems = Array(6) { SoundsItem(id = it, renderState = Loading) }.toList()
 
